@@ -1,0 +1,165 @@
+/* styles.css */
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #6792ff;
+}
+
+/* Change the background color of the home page */
+.stApp {
+    background-color: #000000;
+    
+}
+
+div.block-container {
+    background-color: #000000; 
+}
+
+.sidebar {
+    background-color: #000000;
+    padding: 10px;
+}
+
+
+.st-emotion-cache-13k62yr {
+    position: absolute;
+    background: rgb(14, 17, 23);
+    color: rgb(255 255 255);
+    inset: 0px;
+    color-scheme: dark;
+    overflow: hidden;
+}
+
+.st-emotion-cache-10y5sf6 {
+    font-family: "Source Code Pro", monospace;
+    font-size: 14px;
+    padding-bottom: 0px;
+    color: rgb(255 255 255);
+    top: -22px;
+    position: absolute;
+    white-space: nowrap;
+    background-color: black;
+    font-weight: normal;
+}
+
+/* Change the color of the radio buttons */
+.stRadio > div > label {
+    color: #759cff !important;
+}
+
+/* Change the color of the radio button bullets */
+.stRadio > div > label > div:first-child {
+    background-color: #2f85ff !important;
+    border-color: #2f85ff !important;
+}
+
+/* Change the color of the selectbox */
+.stSelectbox > div > div > div {
+    color:  #b0d1ff !important;
+}
+
+/* Change the color of the file uploader */
+.stFileUploader > div > div > button {
+    background-color: #2f85ff !important;
+    color: white !important;
+}
+
+.stExpander{
+    background-color: #ffffff !important;
+}
+
+.st-emotion-cache-p5msec {
+    position: relative;
+    display: flex;
+    width: 100%;
+    font-size: 14px;
+    padding: 0.75rem 1rem;
+    list-style-type: none;
+    outline: 1px solid white; /* Add this line */
+}
+
+.st-emotion-cache-13na8ym {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    width: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(255, 255, 255);
+    border-radius: 0.5rem;
+    outline: 1px solid white; /* Add this line */
+}
+
+.st-emotion-cache-p5msec:hover {
+    color: #6792ff;
+}
+
+.st-emotion-cache-1cypcdb{
+    background-color: #000000 !important;
+}
+
+.st-emotion-cache-1avcm0n{
+    background-color: #000000 !important;
+}
+
+.stSlider > div > div > div > div > div {
+    background-color: #17080885 !important;
+    
+}
+[class^="st-"]:not([class^="st-"]:not([class$="**"])) {
+    background: linear-gradient(to right, rgb(255, 255, 255) 0%, rgb(202, 202, 202) 50%, rgb(140, 140, 140) 100%);
+}
+.element.style {
+    background: linear-gradient(to right, rgb(255, 255, 255) 0%, rgb(202, 202, 202) 50%, rgb(140, 140, 140) 100%);
+
+}
+
+.st-at.st-au.st-aw.st-av.st-fa.st-c9.st-c5.st-ca.st-cb{
+    background: linear-gradient(to right, rgb(255, 255, 255) 0%, rgb(202, 202, 202) 50%, rgb(140, 140, 140) 100%);
+}
+
+*, ::before, ::after {
+    box-sizing: border-box;
+    border-radius: 6px; /* Add this line */
+}
+
+.st-emotion-cache-hc3laj {
+    display: inline-flex;
+    background-color: #000000;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    font-weight: 400;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    min-height: 38.4px;
+    margin: 0px;
+    line-height: 1.6;
+    color: #6792ff;
+    width: auto;
+    user-select: none;
+    background-color: rgb(43, 44, 54);
+    border: 1px solid rgba(250, 250, 250, 0.2);
+}
+
+.st-emotion-cache-hc3laj:hover {
+    background-color: #000000;
+    color: #7393dc;
+    border-color: darkblue; /* Add this line */
+}
+
+.stSelectbox > div > div > div {
+    color: #6792ff;
+    border-color: darkblue; /* Add this line */
+}
+
+.st-emotion-cache-hc3laj:hover {
+    color: #6792ff;
+    border-color: darkblue; /* Add this line */
+}
+
+.stSlider > div > div > div > div {
+    background-color: #000000 !important;
+    background: darkblue; /* Add this line */
+}
