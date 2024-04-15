@@ -48,7 +48,7 @@ def set_sidebar_style():
     )
 
 def display_title():
-    st.title("Object Detection And Tracking using YOLOv8")
+    st.title("Object Detection And Segmentation using YOLOv8")
 
 def display_configurations():
     st.header("ML Model Config")
