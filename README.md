@@ -96,6 +96,15 @@ Once the model config is done, select a source. There are 3 options to choose fr
 
 This app uses [YOLOv8](https://github.com/ultralytics/ultralytics) for object detection algorithm and [Streamlit](https://github.com/streamlit/streamlit) library for the user interface.
 
-### Disclaimer
+## References/Inspiration
 
-Please note this project is intended for educational purposes only and should not be used in production environments.
+### Git Repositories
+- [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics) - The official YOLOv8 repository
+- [streamlit/streamlit](https://github.com/streamlit/streamlit) - The official Streamlit repository
+- [datitran/object_detector_app](https://github.com/datitran/object_detector_app) - A Streamlit app for object detection using YOLOv5
+
+### Useful Links and References
+- [YOLOv8 Documentation](https://docs.ultralytics.com/) - Official documentation for YOLOv8
+- [Streamlit Documentation](https://docs.streamlit.io/) - Official documentation for Streamlit
+- [Real-time Object Detection with YOLOv8 and Streamlit](https://blog.roboflow.com/real-time-object-detection-with-yolov8-and-streamlit/) - A blog post that inspired this project
+- [How to Build a Real-Time Object Detection App with YOLOv5 and Streamlit](https://towardsdatascience.com/how-to-build-a-real-time-object-detection-app-with-yolov5-and-streamlit-67d354e11525) - Blog post on a similar topic
