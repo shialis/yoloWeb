@@ -6,6 +6,8 @@ This project focuses on both **object segmentation** and **detection**. It allow
 
 This app is up and running on Streamlit cloud server! You can check the demo of this web application on this link: [web app](https://yolov8-web.streamlit.app/)
 
+**Note**: This application is intended to be used in dark mode for the best user experience.
+
 ## Demo
 
 ### Home page

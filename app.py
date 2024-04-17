@@ -53,9 +53,10 @@ def display_title():
 def display_configurations():
     st.header("ML Model Config")
     with st.expander("Help"):
+        st.write(" ")
         st.write("**Select Task**: Choose whether you want to perform object detection or segmentation.")
         st.write("**Select Model Confidence**: Adjust the confidence threshold for detecting objects. Higher values lead to more confident predictions.")
-        st.write("**Select Model**: Choose the pre-trained model to use for the selected task.")
+        st.write("**Select Model**: Choose the pre-trained model to use for the selected task. The models are sorted from least to most computationally expensive.")
         st.write('yolov8n: A smaller and faster variant of YOLOv8 with relatively fewer parameters. Suitable for real-time applications with moderate accuracy.')
         st.write('yolov8s: - A small-sized variant optimized for speed. It sacrifices some accuracy for faster inference.')
         st.write('yolov8m: - A medium-sized variant offering a balance between speed and accuracy. Suitable for general-purpose object detection tasks.')
@@ -86,6 +87,7 @@ def select_model():
 def select_source():
     st.header("Image/Video Config")
     with st.expander("Help"):
+        st.write(" ")
         st.write("**Select Source**: Choose the input source for the detection task - image, video, or webcam.")
 
     source_radio = st.radio("Select Source", configurations.SOURCES_LIST)
