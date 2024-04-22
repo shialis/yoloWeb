@@ -39,7 +39,7 @@ This app is up and running on Streamlit cloud server! You can check the demo of 
 ```bash
 pip install ultralytics streamlit
 
-pip install requirements.txt
+pip install -r requirements.txt
 
 pip install streamlit
 ```
@@ -47,7 +47,7 @@ pip install streamlit
 
 ## Installation
 
-1. Clone the repository: `[(https://github.com/shialis/yolov8-streamlit.git)]`
+1. Clone the repository: `https://github.com/shialis/yolov8-streamlit.git`
 2. Add the ultralytics folder from the original yolov8 repository, to `/yolov8-streamlit`. That repository can be found [here]([https://github.com/ultralytics/ultralytics/tree/main/ultralytics])
 3. Download the pre-trained YOLOv8 weights from [here]([https://docs.ultralytics.com/models/yolov8/#__tabbed_1_1])
  - You must download all Detection (coco) files, and place them in the `/weights/detection` directory, these are yolov8n.pt,..., yolov8x.pt
