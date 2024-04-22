@@ -1,16 +1,32 @@
-matplotlib>=3.2.2
+# Data Analysis
+numpy>=1.21.2
+pandas>=1.3.3
+scipy>=1.7.1
+seaborn>=0.11.2
+
+# Image Processing
 opencv-python>=4.6.0
-numpy
-py-cpuinfo
-opencv-python-headless
-Pillow>=7.1.2
-PyYAML>=5.3.1
-requests>=2.23.0
-scipy>=1.4.1
-torch>=1.7.0
-torchvision>=0.8.1
-tqdm>=4.64.0
-easydict
-pandas>=1.1.4
-seaborn>=0.11.0
-psutil
+opencv-python-headless>=4.6.0
+Pillow>=8.3.2
+
+# Deep Learning
+torch>=1.9.0
+torchvision>=0.10.0
+
+# Utilities
+py-cpuinfo>=8.0.0
+tqdm>=4.62.2
+easydict>=1.9
+psutil>=5.8.0
+
+# Web Framework
+streamlit>=1.0.0
+
+# Data Serialization
+PyYAML>=5.4.1
+
+# HTTP
+requests>=2.26.0
+
+# Plotting
+matplotlib>=3.4.3

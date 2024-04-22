@@ -1,44 +1,39 @@
-# Python In-built packages
+# Python built-in packages
 from pathlib import Path
-import PIL
-import cv2
 import tempfile
 # External packages
 import streamlit as st
-import PIL
+import cv2
+from PIL import Image
 # Local Modules
 import configurations
 import utilities
 
-def set_page_config():
+def setup_page():
+    """
+    Set up the Streamlit page configuration and load custom styles.
+    """
     st.set_page_config(
-        page_title="Object Recognition with YOLOv8",
+        page_title="Object Recognition App",
         page_icon="🔍",
         layout="wide",
         initial_sidebar_state="expanded"
     )
+    load_custom_styles()
 
-def load_custom_css():
+def load_custom_styles():
+    """
+    Load custom CSS styles for the Streamlit app.
+    """
     with open("styles.css") as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-def set_sidebar_style():
-    # Set the sidebar's background color to black
     st.markdown(
         """
         <style>
         .sidebar .sidebar-content {
             background: #000000;
         }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Set the sidebar's width to 250px
-    st.markdown(
-        """
-        <style>
         .sidebar {
             width: 250px;
         }
@@ -47,147 +42,165 @@ def set_sidebar_style():
         unsafe_allow_html=True,
     )
 
-def display_title():
-    st.title("Object Detection And Segmentation using YOLOv8")
+def display_header():
+    """
+    Display the header of the application.
+    """
+    st.title("Object Detection And Segmentation App")
 
-def display_configurations():
-    st.header("ML Model Config")
+def show_model_info():
+    """
+    Display information about model configuration and options.
+    """
+    st.header("Model Configuration")
     with st.expander("Help"):
-        st.write(" ")
-        st.write("**Select Task**: Choose whether you want to perform object detection or segmentation.")
-        st.write("**Select Model Confidence**: Adjust the confidence threshold for detecting objects. Higher values lead to more confident predictions.")
-        st.write("**Select Model**: Choose the pre-trained model to use for the selected task. The models are sorted from least to most computationally expensive.")
-        st.write('yolov8n: A smaller and faster variant of YOLOv8 with relatively fewer parameters. Suitable for real-time applications with moderate accuracy.')
-        st.write('yolov8s: - A small-sized variant optimized for speed. It sacrifices some accuracy for faster inference.')
-        st.write('yolov8m: - A medium-sized variant offering a balance between speed and accuracy. Suitable for general-purpose object detection tasks.')
-        st.write('yolov8l: - A large-sized variant with more parameters, providing higher accuracy but slower inference compared to smaller variants.')
-        st.write('yolov8x: - The largest variant with the most parameters, offering the highest accuracy but slower inference speed.')
+        st.write("**Select Task**: Choose between object detection or segmentation.")
+        st.write("**Select Model Confidence**: Adjust the confidence threshold for object detection. Higher values give more confident predictions.")
+        st.write("**Select Model**: Choose a pre-trained model for the selected task. Models are sorted from least to most computationally expensive.")
+        st.write('yolov8n: Smaller and faster model with relatively fewer parameters. Suitable for real-time applications with moderate accuracy.')
+        st.write('yolov8s: Small-sized model optimized for speed. Sacrifices some accuracy for faster inference.')
+        st.write('yolov8m: Medium-sized model offering a balance between speed and accuracy. Suitable for general-purpose object detection tasks.')
+        st.write('yolov8l: Large-sized model with more parameters, providing higher accuracy but slower inference compared to smaller variants.')
+        st.write('yolov8x: The largest model with the most parameters, offering the highest accuracy but slower inference speed.')
 
-def select_model():
-    model_type = st.radio("Select Task", ['Detection', 'Segmentation'])
-    confidence = float(st.slider("Select Model Confidence", min_value=0, max_value=100, value=40, step=1, format="%d%%", help="Recommended range: 30-60")) / 100
+def select_model_and_confidence():
+    """
+    Select the model and confidence level for object detection or segmentation.
+    """
+    task = st.radio("Select Task", ['Detection', 'Segmentation'])
+    confidence = float(st.slider("Select Model Confidence", min_value=0, max_value=100, value=40, step=1, format="%d%%")) / 100
 
-    if model_type == 'Detection':
-        model_type = st.selectbox("Select Model", configurations.DETECTION_MODEL_LIST)
-        model_path = Path(configurations.MODEL_DIR, 'detection', str(model_type))
-    elif model_type == 'Segmentation':
-        model_type = st.selectbox("Select Model", configurations.SEGMENTATION_MODEL_LIST)
-        model_path = Path(configurations.MODEL_DIR, 'segmentation', str(model_type))
+    if task == 'Detection':
+        model_name = st.selectbox("Select Model", configurations.DETECTION_MODEL_LIST)
+        model_path = Path(configurations.MODEL_DIR, 'detection', str(model_name))
+    elif task == 'Segmentation':
+        model_name = st.selectbox("Select Model", configurations.SEGMENTATION_MODEL_LIST)
+        model_path = Path(configurations.MODEL_DIR, 'segmentation', str(model_name))
 
     st.write("**Note:** Models are listed from less detailed and fastest to slowest and most detailed.")
 
     try:
-        model = utilities.load_model(model_path)
-    except Exception as ex:
+        model = utilities.initialize_detector(model_path)
+    except Exception as e:
         st.error(f"Unable to load model. Check the specified path: {model_path}")
-        st.error(ex)
+        st.error(e)
 
     return model, confidence
 
-def select_source():
-    st.header("Image/Video Config")
+def select_input_source():
+    """
+    Select the input source for object detection (image, video, or webcam).
+    """
+    st.header("Input Configuration")
     with st.expander("Help"):
-        st.write(" ")
         st.write("**Select Source**: Choose the input source for the detection task - image, video, or webcam.")
 
-    source_radio = st.radio("Select Source", configurations.SOURCES_LIST)
-    return source_radio
+    source_type = st.radio("Select Source", configurations.MEDIA_TYPES)
+    return source_type
 
-def process_image(model, confidence):
+def process_image_input(model, confidence):
+    """
+    Process image input for object detection.
+    """
     col1, col2 = st.columns(2)
 
     with col1:
-        source_img = st.sidebar.file_uploader("Choose an image...", type=("jpg", "jpeg", "png", 'bmp', 'webp'))
-        try:
-            if source_img is None:
-                default_image_path = str(configurations.DEFAULT_IMAGE) 
-                default_image = PIL.Image.open(default_image_path)
-                st.image(default_image, caption="Default Image", use_column_width=True)
-            else:
-                uploaded_image = PIL.Image.open(source_img)
-                st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
-        except Exception as ex:
-            st.error("Error occurred while opening the image.")
-            st.error(ex)
+        image_file = st.sidebar.file_uploader("Choose an image...", type=("jpg", "jpeg", "png", 'bmp', 'webp'))
+        if image_file:
+            input_image = Image.open(image_file)
+        else:
+            input_image = Image.open(str(configurations.DEFAULT_IMAGE))
+        st.image(input_image, caption="Input Image", use_column_width=True)
 
     with col2:
-        try:
-            if source_img is None:
-                default_detected_image_path = str(configurations.DEFAULT_DETECT_IMAGE)
-                default_detected_image = PIL.Image.open(default_detected_image_path)
-                st.image(default_detected_image, caption='Detected Image', use_column_width=True)
-            else:
-                if st.sidebar.button('Detect Objects'):
-                    res = model.predict(uploaded_image, conf=confidence)
-                    boxes = res[0].boxes
-                    res_plotted = res[0].plot()[:, :, ::-1]
-                    st.image(res_plotted, caption='Detected Image', use_column_width=True)
-                    try:
-                        with st.expander("Detection Results"):
-                            for box in boxes:
-                                st.write(box.data)
-                    except Exception as ex:
-                        st.write("No image is uploaded yet!")
-        except Exception as ex:
-            st.error("Error occurred while processing the image.")
-            st.error(ex)
+        if image_file:
+            if st.sidebar.button('Detect Objects'):
+                results = model.predict(input_image, conf=confidence)
+                detected_image = results[0].plot()[:, :, ::-1]  # Convert from RGB to BGR
+                st.image(detected_image, caption='Detected Image', use_column_width=True)
+                display_detection_results(results)
+        else:
+            default_detected_image = Image.open(str(configurations.DEFAULT_DETECT_IMAGE))
+            st.image(default_detected_image, caption='Detected Image', use_column_width=True)
 
-def process_video(model, confidence):
-    #st.markdown('<style>div.row-widget.stFileUploader>div{width:100% !important;}</style>', unsafe_allow_html=True)
+def display_detection_results(results):
+    """
+    Display detection results.
+    """
+    try:
+        with st.expander("Detection Results"):
+            for box in results[0].boxes:
+                st.write(box.data)
+    except Exception as e:
+        st.write("No detection results available.")
 
-    source_vid = st.sidebar.file_uploader("Choose a video...", type=["mp4", "avi", "mov"])
+def process_video_input(model, confidence):
+    """
+    Process video input for object detection.
+    """
+    video_file = st.sidebar.file_uploader("Choose a video...", type=["mp4", "avi", "mov"])
     col1, col2 = st.columns(2)
 
     with col1:
-        try:
-            if source_vid is None:
-                default_video_path = str(configurations.DEFAULT_VIDEO)
-                st.video(default_video_path, format='video/mp4', start_time=0)
-            else:
-                st.video(source_vid)
-        except Exception as ex:
-            st.error("Error occurred while opening the video.")
-            st.error(ex)
+        if video_file:
+            st.video(video_file)
+        else:
+            st.video(str(configurations.DEFAULT_VIDEO))
 
     with col2:
-        try:
-            if source_vid is None:
-                default_detect_video_path = str(configurations.DEFAULT_DETECT_VIDEO)
-                st.video(default_detect_video_path, format='video/mp4', start_time=0)
-            else:
-                if st.sidebar.button('Detect Objects'):
-                    tfile = tempfile.NamedTemporaryFile(delete=False)
-                    tfile.write(source_vid.read())
-                    vid_cap = cv2.VideoCapture(tfile.name)
+        if video_file:
+            if st.sidebar.button('Detect Objects'):
+                temp_file = process_video_file(video_file)
+                if temp_file:
+                    detect_objects_in_video(model, confidence, temp_file)
+        else:
+            default_detect_video_path = str(configurations.DEFAULT_DETECT_VIDEO)
+            st.video(default_detect_video_path, format='video/mp4', start_time=0)
 
-                    st_frame = st.empty()
-                    while vid_cap.isOpened():
-                        success, image = vid_cap.read()
-                        if success:
-                            utilities.display_detected_frames(confidence, model, st_frame, image)
-                        else:
-                            vid_cap.release()
-                            tfile.close()
-                            break
-        except Exception as ex:
-            st.error("Error occurred while processing the video.")
-            st.error(ex)
-            
+
+def process_video_file(video_file):
+    """
+    Process video file.
+    """
+    try:
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_file.write(video_file.read())
+        return temp_file.name
+    except Exception as e:
+        st.error("Error occurred while processing the video file.")
+        st.error(e)
+        return None
+
+def detect_objects_in_video(model, confidence, video_path):
+    """
+    Perform object detection in a video.
+    """
+    vid_cap = cv2.VideoCapture(video_path)
+    st_frame = st.empty()
+    while vid_cap.isOpened():
+        success, image = vid_cap.read()
+        if success:
+            utilities.show_detection_results(confidence, model, st_frame, image)
+        else:
+            vid_cap.release()
+            break
+
 def main():
+    """
+    Main function to run the application.
+    """
+    setup_page()
+    display_header()
+    show_model_info()
 
-    set_page_config()
-    load_custom_css()
-    display_title()
-    display_configurations()
+    model, confidence = select_model_and_confidence()
+    source_type = select_input_source()
 
-    model, confidence = select_model()
-    source_radio = select_source()
-
-    if source_radio == configurations.IMAGE:
-        process_image(model, confidence)
-    elif source_radio == configurations.VIDEO:
-        process_video(model, confidence)
-    elif source_radio == configurations.WEBCAM:
+    if source_type == configurations.MEDIA_SOURCES['IMAGE']:
+        process_image_input(model, confidence)
+    elif source_type == configurations.MEDIA_SOURCES['VIDEO']:
+        process_video_input(model, confidence)
+    elif source_type == configurations.MEDIA_SOURCES['WEBCAM']:
         utilities.play_video(confidence, model, video_source="webcam")
     else:
         st.error("Please select a valid source type!")

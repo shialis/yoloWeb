@@ -5,63 +5,51 @@ import cv2
 
 import configurations
 
-def load_model(model_path):
+def initialize_detector(detector_path):
     """
-    Loads a YOLO object detection model from the specified model_path.
-
-    Parameters:
-        model_path (str): The path to the YOLO model file.
-
-    Returns:
-        A YOLO object detection model.
-    """
-    model = YOLO(model_path)
-    return model
-
-
-def display_detected_frames(conf, model, st_frame, image):
-    """
-    Display the detected objects on a video frame using the YOLOv8 model.
+    Initialize the YOLO object detection model.
 
     Args:
-    - conf (float): Confidence threshold for object detection.
-    - model (YoloV8): A YOLOv8 object detection model.
-    - st_frame (Streamlit object): A Streamlit object to display the detected video.
-    - image (numpy array): A numpy array representing the video frame.
+        detector_path (str): Path to the YOLO model weights.
 
     Returns:
-    None
+        YOLO: Initialized YOLO model.
     """
-    # Resize the image to a standard size
-    image = cv2.resize(image, (720, int(720*(9/16))))
-
-    # Predict the objects in the image using the YOLOv8 model
-    res = model.predict(image, conf=conf)
-
-    # Plot the detected objects on the video frame
-    res_plotted = res[0].plot()
-    st_frame.image(res_plotted,
-                   caption='Detected Video',
-                   channels="BGR",
-                   use_column_width=True
-                   )
+    return YOLO(detector_path)
 
 
-def play_video(conf, model, video_source):
+def show_detection_results(confidence, detector, streamlit_frame, frame):
     """
-    Plays a video stream from the specified video source.
-    Detects Objects in real-time using the YOLOv8 object detection model.
+    Show object detection results on the given frame.
 
-    Parameters:
-        conf: Confidence of YOLOv8 model.
-        model: An instance of the `YOLOv8` class containing the YOLOv8 model.
-        video_source: The video source (webcam or user-uploaded video file).
+    Args:
+        confidence (float): Detection confidence threshold.
+        detector (YOLO): YOLO object detection model.
+        streamlit_frame: Streamlit frame for displaying the results.
+        frame: Input frame for object detection.
+    """
+    # Adjust the frame size
+    frame = cv2.resize(frame, (720, int(720 * (9 / 16))))
 
-    Returns:
-        None
+    # Use the detector to identify objects in the frame
+    detection_results = detector.predict(frame, conf=confidence)
 
-    Raises:
-        None
+    # Display the results on the frame
+    plotted_results = detection_results[0].plot()
+    streamlit_frame.image(plotted_results,
+                        caption='Detection Output',
+                        channels="BGR",
+                        use_column_width=True)
+
+
+def play_video(confidence, model, video_source):
+    """
+    Play video and perform object detection on each frame.
+
+    Args:
+        confidence (float): Detection confidence threshold.
+        model (YOLO): YOLO object detection model.
+        video_source (str): Source of the video ('webcam' or file path).
     """
     if video_source == "webcam":
         source = configurations.WEBCAM_PATH
@@ -74,7 +62,7 @@ def play_video(conf, model, video_source):
         while vid_cap.isOpened():
             success, image = vid_cap.read()
             if success:
-                display_detected_frames(conf, model, st_frame, image)
+                show_detection_results(confidence, model, st_frame, image)
             else:
                 vid_cap.release()
                 break
@@ -83,26 +71,26 @@ def play_video(conf, model, video_source):
 
 
 def main():
-    # Load the YOLOv8 model
-    model = load_model(configurations.DETECTION_MODELS['yolov8n'])
+    # Initialize the detector with a specific model
+    detector = initialize_detector(configurations.DETECTION_MODELS['yolov8n'])
 
-    # Set the confidence threshold
-    conf = st.sidebar.slider("Confidence", min_value=0.0, max_value=1.0, value=0.5, step=0.1)
+    # Allow user to set the detection confidence
+    detection_confidence = st.sidebar.slider("Detection Confidence", min_value=0.0, max_value=1.0, value=0.5, step=0.1)
 
-    # Select the video source
-    video_source = st.sidebar.radio("Select Video Source", ("Webcam", "Upload Video"))
+    # Option to choose between webcam and video upload
+    video_choice = st.sidebar.radio("Choose Video Input", ("Webcam", "Upload Video"))
 
-    if video_source == "Webcam":
-        if st.sidebar.button('Detect Objects'):
-            play_video(conf, model, "webcam")
+    if video_choice == "Webcam":
+        if st.sidebar.button('Start Webcam Detection'):
+            play_video(detection_confidence, detector, "webcam")
     else:
-        source_vid = st.sidebar.file_uploader("Choose a video...", type=["mp4", "avi", "mov"])
-        if source_vid:
-            st.video(source_vid)
-            if st.sidebar.button('Detect Video Objects'):
-                tfile = tempfile.NamedTemporaryFile(delete=False)
-                tfile.write(source_vid.read())
-                play_video(conf, model, tfile.name)
+        uploaded_video = st.sidebar.file_uploader("Upload a video file", type=["mp4", "avi", "mov"])
+        if uploaded_video:
+            st.video(uploaded_video)
+            if st.sidebar.button('Analyze Uploaded Video'):
+                temp_file = tempfile.NamedTemporaryFile(delete=False)
+                temp_file.write(uploaded_video.read())
+                play_video(detection_confidence, detector, temp_file.name)
 
 if __name__ == '__main__':
     main()
