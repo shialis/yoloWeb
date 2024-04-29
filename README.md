@@ -48,7 +48,7 @@ pip install streamlit
 ## Installation
 
 1. Clone the repository: `https://github.com/shialis/yolov8-streamlit.git`
-2. Add the ultralytics folder from the original yolov8 repository, to `/yolov8-streamlit`. That repository can be found [here]([https://github.com/ultralytics/ultralytics/tree/main/ultralytics])
+2. Add the ultralytics folder from the original yolov8 repository, to `/yolov8-streamlit`. That repository can be found [here](https://github.com/ultralytics/ultralytics/tree/main/ultralytics)
 3. Download the pre-trained YOLOv8 weights from [here]([https://docs.ultralytics.com/models/yolov8/#__tabbed_1_1])
  - You must download all Detection (coco) files, and place them in the `/weights/detection` directory, these are yolov8n.pt,..., yolov8x.pt
  - You must download all Segmentation (coco) files, and place them in the `/weights/segmentation` directory, 
