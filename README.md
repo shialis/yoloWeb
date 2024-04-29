@@ -1,6 +1,6 @@
 # Real-time Object Detection and Tracking with YOLOv8 & Streamlit
 
-This project focuses on both **object segmentation** and **detection**. It allows users to identify and outline objects within images and videos in real-time using advanced AI models like YOLOv8, all within a simple and intuitive interface powered by Streamlit.
+This project focuses on both **object segmentation** and **detection**. It allows users to identify and outline objects within images and videos in real-time using advanced AI models like YOLOv8, all within a simple and intuitive interface powered by Streamlit. Github repository can be found [here](https://github.com/shialis/yoloWeb.git)
 
 ## WebApp Demo on Streamlit Server
 
